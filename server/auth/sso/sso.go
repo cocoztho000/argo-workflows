@@ -68,6 +68,9 @@ type Config struct {
 	// additional scopes (on top of "openid")
 	Scopes        []string        `json:"scopes,omitempty"`
 	SessionExpiry metav1.Duration `json:"sessionExpiry,omitempty"`
+
+	// customGroupClaimName will override the custom claim name
+	CustomGroupClaimName string `json:"customGroupClaimName,omitempty"`
 }
 
 func (c Config) GetSessionExpiry() time.Duration {
@@ -93,6 +96,8 @@ func providerFactoryOIDC(ctx context.Context, issuer string) (providerInterface,
 }
 
 func New(c Config, secretsIf corev1.SecretInterface, baseHRef string, secure bool) (Interface, error) {
+	types.CustomGroupClaimName = c.CustomGroupClaimName
+
 	return newSso(providerFactoryOIDC, c, secretsIf, baseHRef, secure)
 }
 
